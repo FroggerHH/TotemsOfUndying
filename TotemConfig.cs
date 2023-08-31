@@ -52,7 +52,7 @@ public class TotemConfig
     public int healthWrongBiome = 1;
     public int staminaRightBiome = 1;
     public int staminaWrongBiome = 1;
-    [FormerlySerializedAs("mainBiome")] public Biome bestBiome;
+    public Biome bestBiome;
     public Biome badBiome;
     public List<Biome> aditionalBiomes = new();
     public bool allBiomes = false;

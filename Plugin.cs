@@ -619,6 +619,7 @@ internal class Plugin : BaseUnityPlugin
 
         BonemassTotem = Totem.CreateInstance("TotemOfBonemass" /*, "fx_Bonemass"*/);
         BonemassTotem.config.bestBiome = Swamp;
+        BonemassTotem.config.badBiome = AshLands;
         BonemassTotem.config.healthRightBiome = 40;
         BonemassTotem.config.healthWrongBiome = 50;
         BonemassTotem.config.staminaRightBiome = 130;
