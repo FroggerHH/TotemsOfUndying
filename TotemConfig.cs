@@ -16,7 +16,7 @@ namespace TotemsOfUndying;
 [Serializable]
 public class TotemConfig
 {
-    private static readonly string[] AllBiomesStrings = new string[]
+    public static readonly string[] AllBiomesStrings = new string[]
     {
         None.ToString(), Meadows.ToString(), Swamp.ToString(),
         Mountain.ToString(), BlackForest.ToString(), Plains.ToString(), AshLands.ToString(), DeepNorth
@@ -40,8 +40,8 @@ public class TotemConfig
     internal ConfigEntry<string> badBiomeConfig;
     internal ConfigEntry<string> additionalBiomesConfig;
     internal ConfigEntry<bool> allBiomesConfig;
-    internal ConfigEntry<string> bufsConfig;
-    internal ConfigEntry<int> chanceToActivatebufInAdditionalBiomeConfig;
+    internal ConfigEntry<string> buffsConfig;
+    internal ConfigEntry<int> chanceToActivateBuffInAdditionalBiomeConfig;
     internal ConfigEntry<float> additionalBiomeStatsModifierConfig;
 
     public float fallDamageModifier = 0;
@@ -100,10 +100,10 @@ public class TotemConfig
         }).ToList();
 
         allBiomes = allBiomesConfig.Value;
-        buffs = bufsConfig.Value.Split(new string[] { ", " }, StringSplitOptions
+        buffs = buffsConfig.Value.Split(new string[] { ", " }, StringSplitOptions
             .RemoveEmptyEntries).ToList();
 
-        chanceToActivateBufInAdditionalBiome = chanceToActivatebufInAdditionalBiomeConfig.Value;
+        chanceToActivateBufInAdditionalBiome = chanceToActivateBuffInAdditionalBiomeConfig.Value;
         additionalBiomeStatsModifier = additionalBiomeStatsModifierConfig.Value;
 
         var effect = ObjectDB.instance.GetStatusEffect(totem.bossBuff.GetStableHashCode()) as SE_Stats;
@@ -152,10 +152,10 @@ public class TotemConfig
 
         allBiomesConfig = config(name, "Work in all biomes", allBiomes, new(""));
 
-        bufsConfig = config(name, "Buffs", "",
+        buffsConfig = config(name, "Buffs", "",
             new("The effects that the player will receive when activating the totem of the best biome."));
 
-        chanceToActivatebufInAdditionalBiomeConfig = config(name, "Chance to activate buf in additional biome",
+        chanceToActivateBuffInAdditionalBiomeConfig = config(name, "Chance to activate buf in additional biome",
             chanceToActivateBufInAdditionalBiome,
             new(
                 "The chance that the player will receive buffs when activated in an additional biome.",

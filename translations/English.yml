@@ -1,1 +1,11 @@
 TotemsOfUndying_none: "none"
+healthAfterBiome: "health after activation in"
+staminaAfterBiome: "stamina after activation in"
+allBiomes: any biome
+dontWorkInBiome: Will not save
+lessEffectInBiomes: The effect is weaker in
+timesInBiomes: once a
+buffs: "Bonus Effects:"
+chanceToActivateBuffInAdditionalBiome: "Chance to get bonus effects without being in"
+bossSE_effects: "Applied effects when activated in"
+holdShift: "Hold <color=yellow>[Shift]</color> for more information"

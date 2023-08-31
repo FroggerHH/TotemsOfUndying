@@ -41,8 +41,6 @@ internal class Plugin : BaseUnityPlugin
         _self = this;
 
         Config.SaveOnConfigSet = false;
-        relocateIntervalConfig = config("Merchant", "RelocateInterval", relocateInterval,
-            "Number of days before merchant relocates. Sit to 0 to disable relocation.");
 
         SetupWatcher();
         Config.ConfigReloaded += (_, _) => UpdateConfiguration();
@@ -754,17 +752,17 @@ internal class Plugin : BaseUnityPlugin
 
     #region configs
 
-    public static ConfigEntry<int> relocateIntervalConfig;
-
-    public static int relocateInterval = 1;
-
     #endregion
 
     internal void UpdateConfiguration()
     {
         try
         {
-            relocateInterval = relocateIntervalConfig.Value;
+            EikthyrTotem?.config?.UpdateValues();
+            TheElderTotem?.config?.UpdateValues();
+            BonemassTotem?.config?.UpdateValues();
+            ModerTotem?.config?.UpdateValues();
+            YagluthTotem?.config?.UpdateValues();
 
             Debug("Configuration Received");
         }
