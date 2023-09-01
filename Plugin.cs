@@ -604,6 +604,7 @@ internal class Plugin : BaseUnityPlugin
 
         TheElderTotem = Totem.CreateInstance("TotemOfTheElder" /*, "fx_TheElder"*/);
         TheElderTotem.config.bestBiome = BlackForest;
+        TheElderTotem.config.badBiome = AshLands;
         TheElderTotem.config.aditionalBiomes.Add(Mistlands);
         TheElderTotem.config.healthRightBiome = 50;
         TheElderTotem.config.healthWrongBiome = 20;
@@ -638,8 +639,10 @@ internal class Plugin : BaseUnityPlugin
 
         YagluthTotem = Totem.CreateInstance("TotemOfYagluth" /*, "fx_Yagluth"*/);
         YagluthTotem.config.bestBiome = Plains;
+        YagluthTotem.config.badBiome = Ocean;
         YagluthTotem.config.aditionalBiomes.Add(Swamp);
         YagluthTotem.config.aditionalBiomes.Add(Mistlands);
+        YagluthTotem.config.aditionalBiomes.Add(AshLands);
         YagluthTotem.config.healthRightBiome = 150;
         YagluthTotem.config.healthWrongBiome = 80;
         YagluthTotem.config.staminaRightBiome = 60;
