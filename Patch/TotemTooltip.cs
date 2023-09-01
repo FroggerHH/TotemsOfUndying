@@ -41,7 +41,7 @@ public class TotemTooltip
         sb.AppendLine();
 
         sb.AppendLine(
-            $"<color=yellow>{totem.config.healthRightBiome}</color> {"$healthAfterBiome".Localize()} {bestBiome}");
+            $"<color=#ff8080ff>{totem.config.healthRightBiome}</color> {"$healthAfterBiome".Localize()} {bestBiome}");
         sb.AppendLine(
             $"<color=yellow>{totem.config.staminaRightBiome}</color> {"$staminaAfterBiome".Localize()} {bestBiome}");
         if (totem.config.allBiomes == false)
@@ -69,7 +69,8 @@ public class TotemTooltip
             if (wrongBiomes.Count > 0)
             {
                 var wrongBiomesStr = wrongBiomes.GetString("</color>, <color=orange>");
-                sb.AppendLine($"<color=yellow>{totem.config.healthWrongBiome}</color> {"$healthAfterBiome".Localize()} "
+                sb.AppendLine(
+                    $"<color=#ff8080ff>{totem.config.healthWrongBiome}</color> {"$healthAfterBiome".Localize()} "
                               + $"<color=orange>"
                               + $"{wrongBiomesStr}"
                               + $"</color>");
@@ -79,8 +80,7 @@ public class TotemTooltip
                     + $"{wrongBiomesStr}"
                     + $"</color>");
             }
-
-
+            
             if (badBiome != "[biome_none]")
                 sb.AppendLine($"{"$dontWorkInBiome".Localize()} <color=orange>{badBiome}</color> ");
 
@@ -97,7 +97,7 @@ public class TotemTooltip
                     .GetStableHashCode()).m_name.Localize()).GetString("</color>, <color=orange>")}</color> ");
         }
 
-        sb.AppendLine();
+        //sb.AppendLine();
         sb.AppendLine($"{"$bossSE_effects".Localize()} {bestBiome}");
         sb.AppendLine(tooltipSe);
         __result += sb.ToString();

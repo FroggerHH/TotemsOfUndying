@@ -14,24 +14,13 @@ public struct SimpleVector2 : IEquatable<SimpleVector2>
         this.y = y;
     }
 
-    public SimpleVector2()
-    {
-    }
+    public SimpleVector2() { }
 
-    public bool Equals(SimpleVector2 other)
-    {
-        return x == other.x && y == other.y;
-    }
+    public bool Equals(SimpleVector2 other) { return x == other.x && y == other.y; }
 
-    public override string ToString()
-    {
-        return $"X: {x}, Y: {y}";
-    }
+    public override string ToString() { return $"X: {x}, Y: {y}"; }
 
-    public Vector2 ToVector2()
-    {
-        return new Vector2(x, y);
-    }
+    public Vector2 ToVector2() { return new Vector2(x, y); }
 }
 
 public static class SimpleVector2Ext

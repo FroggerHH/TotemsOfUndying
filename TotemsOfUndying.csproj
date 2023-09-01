@@ -51,19 +51,19 @@
             <HintPath>..\..\..\Steam\steamapps\common\Valheim\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="ItemManager">
-          <HintPath>..\Utils\ItemManager.dll</HintPath>
+            <HintPath>..\Utils\ItemManager.dll</HintPath>
         </Reference>
         <Reference Include="LocalizationManager">
-          <HintPath>..\Utils\LocalizationManager.dll</HintPath>
+            <HintPath>..\Utils\LocalizationManager.dll</HintPath>
         </Reference>
         <Reference Include="PieceManager">
-          <HintPath>..\Utils\PieceManager.dll</HintPath>
+            <HintPath>..\Utils\PieceManager.dll</HintPath>
         </Reference>
         <Reference Include="ServerSync">
             <HintPath>..\Utils\ServerSync.dll</HintPath>
         </Reference>
         <Reference Include="StatusEffectManager">
-          <HintPath>..\Utils\StatusEffectManager.dll</HintPath>
+            <HintPath>..\Utils\StatusEffectManager.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
@@ -135,7 +135,10 @@
         <Compile Include="Extensions\Valheim\ZNetSceneExtension.cs" />
         <Compile Include="Extensions\Valheim\ZoneSystemExtension.cs" />
         <Compile Include="Extensions\VectorExtension.cs" />
+        <Compile Include="Patch\CraftItemDescriptionSize.cs" />
+        <Compile Include="Patch\MaxCountInInventory.cs" />
         <Compile Include="Patch\TotemTooltip.cs" />
+        <Compile Include="Patch\UpdateConfigOnGameStart.cs" />
         <Compile Include="Patch\UseTotem.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="ConfigurationManagerAttributes.cs" />
@@ -150,16 +153,16 @@
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="translations\English.yml">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <EmbeddedResource Include="translations\Russian.yml">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <EmbeddedResource Include="assets\totems">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <EmbeddedResource Include="assets\totemsofundying_efects">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <Content Include="ILRepack.targets" />
     </ItemGroup>

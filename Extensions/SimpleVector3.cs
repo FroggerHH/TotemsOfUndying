@@ -16,14 +16,9 @@ public struct SimpleVector3 : IEquatable<SimpleVector3>
         this.z = z;
     }
 
-    public SimpleVector3()
-    {
-    }
+    public SimpleVector3() { }
 
-    public bool Equals(SimpleVector3 other)
-    {
-        return x == other.x && y == other.y && z == other.z;
-    }
+    public bool Equals(SimpleVector3 other) { return x == other.x && y == other.y && z == other.z; }
 
     public override string ToString()
     {
@@ -31,10 +26,7 @@ public struct SimpleVector3 : IEquatable<SimpleVector3>
         //return $"{x}, {y}, {z}";
     }
 
-    public Vector3 ToVector3()
-    {
-        return new Vector3(x, y, z);
-    }
+    public Vector3 ToVector3() { return new Vector3(x, y, z); }
 }
 
 public static class SimpleVector3Ext

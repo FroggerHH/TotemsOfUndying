@@ -39,10 +39,12 @@ public class TotemConfig
     internal ConfigEntry<string> mainBiomeConfig;
     internal ConfigEntry<string> badBiomeConfig;
     internal ConfigEntry<string> additionalBiomesConfig;
-    internal ConfigEntry<bool> allBiomesConfig;
     internal ConfigEntry<string> buffsConfig;
     internal ConfigEntry<int> chanceToActivateBuffInAdditionalBiomeConfig;
     internal ConfigEntry<float> additionalBiomeStatsModifierConfig;
+    internal ConfigEntry<bool> allBiomesConfig;
+    internal ConfigEntry<bool> teleportableConfig;
+    internal ConfigEntry<int> maxCountInInventoryConfig;
 
     public float fallDamageModifier = 0;
     public float damageModifier = 0;
@@ -56,19 +58,23 @@ public class TotemConfig
     public Biome badBiome;
     public List<Biome> aditionalBiomes = new();
     public bool allBiomes = false;
-    public GameObject gameObject;
-    public ItemDrop itemDrop;
-    public GameObject fx;
+    public bool teleportable = true;
+    public int maxCountInInventory = 5;
+
     public List<string> buffs = new();
     public int chanceToActivateBufInAdditionalBiome = 45;
     public float additionalBiomeStatsModifier = 0.6f;
+
+    public GameObject gameObject;
+    public ItemDrop itemDrop;
+    public GameObject fx;
 
     public TotemConfig(Totem totem, string name)
     {
         this.name = name;
         this.totem = totem;
         gameObject = bundle.LoadAsset<GameObject>(name);
-        itemDrop = gameObject?.GetComponent<ItemDrop>();
+        itemDrop = gameObject.GetComponent<ItemDrop>();
         fx = bundle.LoadAsset<GameObject>($"fx_{name.Replace("TotemOf", string.Empty)}");
     }
 
@@ -82,6 +88,11 @@ public class TotemConfig
         healthWrongBiome = healthWrongBiomeConfig.Value;
         staminaRightBiome = staminaRightBiomeConfig.Value;
         staminaWrongBiome = staminaWrongBiomeConfig.Value;
+        maxCountInInventory = maxCountInInventoryConfig.Value;
+        allBiomes = allBiomesConfig.Value;
+        teleportable = teleportableConfig.Value;
+        chanceToActivateBufInAdditionalBiome = chanceToActivateBuffInAdditionalBiomeConfig.Value;
+        additionalBiomeStatsModifier = additionalBiomeStatsModifierConfig.Value;
 
         if (!Biome.TryParse(badBiomeConfig.Value, out badBiome))
             DebugError($"{badBiomeConfig.Value} is not a valid biome");
@@ -99,22 +110,43 @@ public class TotemConfig
             }
         }).ToList();
 
-        allBiomes = allBiomesConfig.Value;
         buffs = buffsConfig.Value.Split(new string[] { ", " }, StringSplitOptions
             .RemoveEmptyEntries).ToList();
+        if (ObjectDB.instance)
+        {
+            var effect = ObjectDB.instance.GetStatusEffect(totem.bossBuff.GetStableHashCode()) as SE_Stats;
+            if (effect)
+            {
+                effect.m_ttl = bossBuffTtl;
+                effect.m_speedModifier = speedModifier;
+                effect.m_damageModifier = damageModifier;
+                effect.m_fallDamageModifier = fallDamageModifier;
+            }
+        }
 
-        chanceToActivateBufInAdditionalBiome = chanceToActivateBuffInAdditionalBiomeConfig.Value;
-        additionalBiomeStatsModifier = additionalBiomeStatsModifierConfig.Value;
+        itemDrop.m_itemData.m_shared.m_teleportable = teleportable;
+        if (Player.m_localPlayer)
+        {
+            var inventory = Player.m_localPlayer.GetInventory();
+            if (inventory != null)
+            {
+                foreach (var item in inventory.GetAllItems().Where(x => x.m_shared.m_name == itemDrop.m_itemData
+                             .m_shared.m_name))
+                {
+                    item.m_shared.m_teleportable = teleportable;
+                }
 
-        var effect = ObjectDB.instance.GetStatusEffect(totem.bossBuff.GetStableHashCode()) as SE_Stats;
-        effect.m_ttl = bossBuffTtl;
-        effect.m_speedModifier = speedModifier;
-        effect.m_damageModifier = damageModifier;
-        effect.m_fallDamageModifier = fallDamageModifier;
+                inventory.UpdateTotalWeight();
+                InventoryGui.instance.UpdateInventory(Player.m_localPlayer);
+            }
+        }
     }
 
     public void Bind()
     {
+        maxCountInInventoryConfig = config(name, "Max count in inventory", maxCountInInventory, new("",
+            new AcceptableValueRange<int>(1, 25), new ConfigurationManagerAttributes() { }));
+
         fallDamageModifierConfig = config(name, "Fall damage modifier applied by boss buff", fallDamageModifier, new("",
             new AcceptableValueRange<float>(-5, 5), new ConfigurationManagerAttributes() { }));
 
@@ -139,7 +171,7 @@ public class TotemConfig
         staminaWrongBiomeConfig = config(name, "Stamina after dying in other biome", staminaWrongBiome, new("",
             new AcceptableValueRange<int>(0, 1000), new ConfigurationManagerAttributes() { }));
 
-        mainBiomeConfig = config(name, "Best biome", bestBiome.ToString(), 
+        mainBiomeConfig = config(name, "Best biome", bestBiome.ToString(),
             new("Related to healthBestBiome, healthWrongBiome, staminaBestBiome etc.",
                 new AcceptableValueList<string>(AllBiomesStrings)));
 
@@ -151,6 +183,8 @@ public class TotemConfig
                 "The player will receive the same stats as when activated in the best biome multiplied by additionalBiomeStatsModifier"));
 
         allBiomesConfig = config(name, "Work in all biomes", allBiomes, new(""));
+        teleportableConfig = config(name, "Teleportable", teleportable,
+            new("Is it possible to transfer an item through the portal"));
 
         buffsConfig = config(name, "Buffs", "",
             new("The effects that the player will receive when activating the totem of the best biome."));

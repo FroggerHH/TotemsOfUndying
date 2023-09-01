@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
-using Extensions;
 using HarmonyLib;
 using ItemManager;
+using LocalizationManager;
 using PieceManager;
 using ServerSync;
-using UnityEngine;
 using StatusEffectManager;
-using LocalizationManager;
-using static Heightmap;
+using UnityEngine;
 using static Heightmap.Biome;
 
 namespace TotemsOfUndying;
 
-[BepInPlugin(ModGUID, ModName, ModVersion)]
+[BepInPlugin(ModGUID, ModName, ModVersion)] [SuppressMessage("ReSharper", "StringLiteralTypo")]
 internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "Frogger.TotemsOfUndying", ModVersion = "1.1.0", ModGUID = "com." + ModName;
+    internal const string ModName = "Frogger.TotemsOfUndying", ModVersion = "2.1.0", ModGUID = "com." + ModName;
 
     internal static Plugin _self;
 
@@ -660,8 +658,9 @@ internal class Plugin : BaseUnityPlugin
         GetTotem(totemName)?.Use(itemData, currentBiome);
     }
 
-    public static Totem GetTotem(string totemName) =>
-        totemName switch
+    public static Totem GetTotem(string totemName)
+    {
+        return totemName switch
         {
             "$item_TotemOfEikthyr" => EikthyrTotem,
             "$item_TotemOfTheElder" => TheElderTotem,
@@ -670,6 +669,7 @@ internal class Plugin : BaseUnityPlugin
             "$item_TotemOfYagluth" => YagluthTotem,
             _ => null
         };
+    }
 
 
     #region tools
