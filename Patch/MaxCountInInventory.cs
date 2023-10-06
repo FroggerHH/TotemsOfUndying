@@ -1,10 +1,4 @@
-﻿using System;
-using Extensions.Valheim;
-using HarmonyLib;
-using static TotemsOfUndying.Plugin;
-using static ItemDrop;
-
-namespace TotemsOfUndying.Patch;
+﻿namespace TotemsOfUndying.Patch;
 
 [HarmonyPatch]
 public class MaxCountInInventory
@@ -20,16 +14,16 @@ public class MaxCountInInventory
         return true;
     }
 
-    [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new Type[] { typeof(ItemData) })]
-    [HarmonyPrefix, HarmonyWrapSafe]
-    private static bool CheckForTotems(Inventory __instance, ItemData item) => CheckForTotemsCore(__instance, item);
-
-    [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new Type[]
+    [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemData))]
+    [HarmonyPrefix] [HarmonyWrapSafe]
+    private static bool CheckForTotems(Inventory __instance, ItemData item)
     {
-        typeof(string), typeof(int), typeof(int),
-        typeof(int), typeof(long), typeof(string), typeof(bool)
-    })]
-    [HarmonyPrefix, HarmonyWrapSafe]
+        return CheckForTotemsCore(__instance, item);
+    }
+
+    [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(string), typeof(int), typeof(int), typeof(int),
+        typeof(long), typeof(string), typeof(bool))]
+    [HarmonyPrefix] [HarmonyWrapSafe]
     private static bool CheckForTotems(Inventory __instance, string name)
     {
         var item = ObjectDB.instance.GetItem(name)?.m_itemData;

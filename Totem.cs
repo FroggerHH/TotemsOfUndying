@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using static Heightmap;
-using static TotemsOfUndying.Plugin;
-using Object = UnityEngine.Object;
-using Random = UnityEngine.Random;
-
-namespace TotemsOfUndying;
+﻿namespace TotemsOfUndying;
 
 public class Totem
 {
-    internal TotemConfig config { get; private set; }
-    public Totem(string name) { config = new(this, name); }
+    public Totem(string name) { config = new TotemConfig(this, name); }
+    internal TotemConfig config { get; }
 
     public string bossBuff => $"SE_{config.name.Replace("TotemOf", string.Empty)}";
 
@@ -22,10 +13,10 @@ public class Totem
         return totem;
     }
 
-    public void Use(ItemDrop.ItemData itemData, Heightmap.Biome biome)
+    public void Use(ItemData itemData, Biome biome)
     {
-        Inventory inventory = Player.m_localPlayer.GetInventory();
-        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, config.name, 0, null);
+        var inventory = Player.m_localPlayer.GetInventory();
+        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, config.name);
         if (biome == config.bestBiome || config.allBiomes)
         {
             Player.m_localPlayer.SetHealth(config.healthRightBiome);
@@ -46,11 +37,11 @@ public class Totem
             Player.m_localPlayer.AddStamina(config.staminaWrongBiome);
         }
 
-        Object.Instantiate<GameObject>(config.fx,
+        Instantiate(config.fx,
             new Vector3(Player.m_localPlayer.transform.position.x, Player.m_localPlayer.transform.position.y + 1.4f,
                 Player.m_localPlayer.transform.position.z), Quaternion.identity);
         inventory.RemoveItem(itemData, 1);
     }
 
-    public SE_Stats GetSE() => ObjectDB.instance.GetStatusEffect(bossBuff.GetStableHashCode()) as SE_Stats;
+    public SE_Stats GetSE() { return ObjectDB.instance.GetStatusEffect(bossBuff.GetStableHashCode()) as SE_Stats; }
 }

@@ -1,21 +1,18 @@
-﻿using HarmonyLib;
-using static TotemsOfUndying.Plugin;
-
-namespace TotemsOfUndying.Patch;
+﻿namespace TotemsOfUndying.Patch;
 
 [HarmonyPatch]
 public class CraftItemDescriptionSize
 {
     private static bool firstCall = true;
-    private static int vanilaMinSize;
+    private static float vanilaMinSize;
 
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
-    [HarmonyPostfix, HarmonyWrapSafe]
+    [HarmonyPostfix] [HarmonyWrapSafe]
     private static void Patch(InventoryGui __instance)
     {
         if (firstCall)
         {
-            vanilaMinSize = __instance.m_recipeDecription.resizeTextMinSize;
+            vanilaMinSize = __instance.m_recipeDecription.fontSizeMin;
             firstCall = false;
         }
 
@@ -25,6 +22,6 @@ public class CraftItemDescriptionSize
         if (itemData == null) return;
         var totem = GetTotem(itemData.m_shared.m_name);
 
-        __instance.m_recipeDecription.resizeTextMinSize = totem == null ? vanilaMinSize : 1;
+        __instance.m_recipeDecription.fontSizeMin = totem == null ? vanilaMinSize : 1;
     }
 }

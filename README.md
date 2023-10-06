@@ -14,6 +14,9 @@ When activated in one of the additional biomes
 , you will not get a unique bonus, with a certain chance you will get additional effects and also get
 a little less health and stamina than in the best biome. In a bad biome, the totem won't work.
 
+Special thanks for the models to ```MichaelB```, discord -
+@anime9896, [artstation](https://www.artstation.com/forexample)
+
 #### All totem characteristics are configurable in the mod configuration.
 
 Config:

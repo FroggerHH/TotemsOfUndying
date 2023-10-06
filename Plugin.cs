@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
 using BepInEx;
-using BepInEx.Configuration;
-using HarmonyLib;
 using ItemManager;
 using LocalizationManager;
 using PieceManager;
-using ServerSync;
 using StatusEffectManager;
-using UnityEngine;
-using static Heightmap.Biome;
 
 namespace TotemsOfUndying;
 
@@ -21,9 +12,10 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "Frogger.TotemsOfUndying", ModVersion = "2.1.0", ModGUID = "com." + ModName;
-
-    internal static Plugin _self;
+    internal const string ModName = "TotemsOfUndying",
+        ModAuthor = "Frogger",
+        ModVersion = "2.2.0",
+        ModGUID = "com." + ModAuthor + ModName;
 
     #endregion
 
@@ -36,21 +28,13 @@ internal class Plugin : BaseUnityPlugin
 
     private void Awake()
     {
-        _self = this;
-
-        Config.SaveOnConfigSet = false;
-
-        SetupWatcher();
-        Config.ConfigReloaded += (_, _) => UpdateConfiguration();
-        Config.SaveOnConfigSet = true;
-        Config.Save();
-
-        Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGUID);
+        CreateMod(this, ModName, ModAuthor, ModVersion);
+        mod.OnConfigurationChanged += UpdateConfiguration;
         bundle = PrefabManager.RegisterAssetBundle("totems");
 
         #region Totems
 
-        Item totemOfEikthyr = new Item(bundle, "TotemOfEikthyr");
+        var totemOfEikthyr = new Item(bundle, "TotemOfEikthyr");
         totemOfEikthyr.Name
             .English("Totem Of Eikthyr")
             .Swedish("Totem av Eikthyr")
@@ -121,7 +105,7 @@ internal class Plugin : BaseUnityPlugin
         totemOfEikthyr.RequiredItems.Add("TrophyEikthyr", 1);
         totemOfEikthyr.CraftAmount = 1;
 
-        Item totemOfTheElder = new Item(bundle, "TotemOfTheElder");
+        var totemOfTheElder = new Item(bundle, "TotemOfTheElder");
         totemOfTheElder.Name
             .English("Totem Of TheElder")
             .Swedish("Totem Of TheElder")
@@ -192,7 +176,7 @@ internal class Plugin : BaseUnityPlugin
         totemOfTheElder.RequiredItems.Add("TrophyTheElder", 1);
         totemOfTheElder.CraftAmount = 1;
 
-        Item totemOfBonemass = new Item(bundle, "TotemOfBonemass");
+        var totemOfBonemass = new Item(bundle, "TotemOfBonemass");
         totemOfBonemass.Name
             .English("Totem Of Bonemass")
             .Swedish("Totem Av Benmassa")
@@ -263,7 +247,7 @@ internal class Plugin : BaseUnityPlugin
         totemOfBonemass.RequiredItems.Add("TrophyBonemass", 1);
         totemOfBonemass.CraftAmount = 1;
 
-        Item totemOfModer = new Item(bundle, "TotemOfModer");
+        var totemOfModer = new Item(bundle, "TotemOfModer");
         totemOfModer.Name
             .English("Totem Of Moder")
             .Swedish("Totem av Moder")
@@ -335,7 +319,7 @@ internal class Plugin : BaseUnityPlugin
         totemOfModer.CraftAmount = 1;
 
 
-        Item totemOfYagluth = new Item(bundle, "TotemOfYagluth");
+        var totemOfYagluth = new Item(bundle, "TotemOfYagluth");
         totemOfYagluth.Name
             .English("Totem Of Yagluth")
             .Swedish("Totem av Yagluth")
@@ -410,7 +394,7 @@ internal class Plugin : BaseUnityPlugin
 
         #region Altar
 
-        BuildPiece buildPiece = new BuildPiece(bundle, "Altar");
+        var buildPiece = new BuildPiece(bundle, "Altar");
         buildPiece.Name
             .English("Altar")
             .Swedish("Altare")
@@ -477,7 +461,7 @@ internal class Plugin : BaseUnityPlugin
             .Ukrainian("Взивай до допомоги повалених босів, принісши їхню голову в жертву.");
         buildPiece.RequiredItems.Add("Stone", 20, true);
         buildPiece.RequiredItems.Add("SurtlingCore", 10, true);
-        buildPiece.Category.Add(BuildPieceCategory.Crafting);
+        buildPiece.Category.Set(BuildPieceCategory.Crafting);
 
         #endregion
 
@@ -490,37 +474,37 @@ internal class Plugin : BaseUnityPlugin
         SE_Yagluth_effect.m_icon = YagluthTotem.config.itemDrop.m_itemData.GetIcon();
         SE_Yagluth_effect.m_mods = new List<HitData.DamageModPair>
         {
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Physical,
                 m_modifier = HitData.DamageModifier.Resistant
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Pickaxe,
                 m_modifier = HitData.DamageModifier.Resistant
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Pierce,
                 m_modifier = HitData.DamageModifier.Resistant
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Poison,
                 m_modifier = HitData.DamageModifier.Resistant
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Slash,
                 m_modifier = HitData.DamageModifier.Resistant
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Spirit,
                 m_modifier = HitData.DamageModifier.Resistant
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Elemental,
                 m_modifier = HitData.DamageModifier.Resistant
@@ -533,7 +517,7 @@ internal class Plugin : BaseUnityPlugin
         SE_Moder_effect.m_icon = ModerTotem.config.itemDrop.m_itemData.GetIcon();
         SE_Moder_effect.m_mods = new List<HitData.DamageModPair>
         {
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Fire,
                 m_modifier = HitData.DamageModifier.Weak
@@ -546,7 +530,7 @@ internal class Plugin : BaseUnityPlugin
         SE_Bonemass_effect.m_icon = BonemassTotem.config.itemDrop.m_itemData.GetIcon();
         SE_Bonemass_effect.m_mods = new List<HitData.DamageModPair>
         {
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Blunt,
                 m_modifier = HitData.DamageModifier.VeryResistant
@@ -559,7 +543,7 @@ internal class Plugin : BaseUnityPlugin
         SE_Eikthyr_effect.m_icon = EikthyrTotem.config.itemDrop.m_itemData.GetIcon();
         SE_Eikthyr_effect.m_mods = new List<HitData.DamageModPair>
         {
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Lightning,
                 m_modifier = HitData.DamageModifier.VeryResistant
@@ -570,15 +554,15 @@ internal class Plugin : BaseUnityPlugin
         SETheElder.IconSprite = TheElderTotem.config.itemDrop.m_itemData.GetIcon();
         var SETheElder_effect = SETheElder.Effect as SE_Stats;
         SETheElder_effect.m_icon = TheElderTotem.config.itemDrop.m_itemData.GetIcon();
-        SETheElder_effect.m_modifyAttackSkill = Skills.SkillType.Axes;
+        SETheElder_effect.m_modifyAttackSkill = SkillType.Axes;
         SETheElder_effect.m_mods = new List<HitData.DamageModPair>
         {
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Chop,
                 m_modifier = HitData.DamageModifier.Weak
             },
-            new HitData.DamageModPair
+            new()
             {
                 m_type = HitData.DamageType.Pierce,
                 m_modifier = HitData.DamageModifier.Resistant
@@ -655,7 +639,7 @@ internal class Plugin : BaseUnityPlugin
         Debug("All Totems Loaded");
     }
 
-    public void UseTotem(ItemDrop.ItemData itemData, string totemName)
+    public void UseTotem(ItemData itemData, string totemName)
     {
         var currentBiome = Player.m_localPlayer.GetCurrentBiome();
         GetTotem(totemName)?.Use(itemData, currentBiome);
@@ -674,106 +658,14 @@ internal class Plugin : BaseUnityPlugin
         };
     }
 
-
-    #region tools
-
-    public static void Debug(object msg, bool showInConsole = false)
-    {
-        _self.Logger.LogInfo(msg);
-        if (showInConsole && Console.IsVisible()) Console.instance.AddString(msg.ToString());
-    }
-
-    public static void DebugError(object msg, bool showWriteToDev = true)
-    {
-        if (showWriteToDev) msg += "Write to the developer and moderator if this happens often.";
-
-        _self.Logger.LogError(msg);
-    }
-
-    public static void DebugWarning(object msg, bool showWriteToDev = false)
-    {
-        if (showWriteToDev) msg += "Write to the developer and moderator if this happens often.";
-
-        _self.Logger.LogWarning(msg);
-    }
-
-    #endregion
-
-    #region ConfigSettings
-
-    #region tools
-
-    private static readonly string ConfigFileName = $"{ModGUID}.cfg";
-    private DateTime LastConfigChange;
-
-    public static readonly ConfigSync configSync = new(ModName)
-        { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
-
-    public static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
-        bool synchronizedSetting = true)
-    {
-        var configEntry = _self.Config.Bind(group, name, value, description);
-
-        var syncedConfigEntry = configSync.AddConfigEntry(configEntry);
-        syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
-
-        return configEntry;
-    }
-
-    private ConfigEntry<T> config<T>(string group, string name, T value, string description,
-        bool synchronizedSetting = true) =>
-        config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-
-    private void SetupWatcher()
-    {
-        FileSystemWatcher mainConfigFileSystemWatcher = new(Paths.ConfigPath, ConfigFileName);
-        mainConfigFileSystemWatcher.Changed += ConfigChanged;
-        mainConfigFileSystemWatcher.IncludeSubdirectories = true;
-        mainConfigFileSystemWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
-        mainConfigFileSystemWatcher.EnableRaisingEvents = true;
-    }
-
-
-    private void ConfigChanged(object sender, FileSystemEventArgs e)
-    {
-        if ((DateTime.Now - LastConfigChange).TotalSeconds <= 2) return;
-
-        LastConfigChange = DateTime.Now;
-        try
-        {
-            Config.Reload();
-        }
-        catch
-        {
-            DebugError("Can't reload Config");
-        }
-    }
-
-    internal void ConfigChanged() { ConfigChanged(null, null); }
-
-    #endregion
-
-    #region configs
-
-    #endregion
-
     internal void UpdateConfiguration()
     {
-        try
-        {
-            EikthyrTotem?.config?.UpdateValues();
-            TheElderTotem?.config?.UpdateValues();
-            BonemassTotem?.config?.UpdateValues();
-            ModerTotem?.config?.UpdateValues();
-            YagluthTotem?.config?.UpdateValues();
+        EikthyrTotem?.config?.UpdateValues();
+        TheElderTotem?.config?.UpdateValues();
+        BonemassTotem?.config?.UpdateValues();
+        ModerTotem?.config?.UpdateValues();
+        YagluthTotem?.config?.UpdateValues();
 
-            Debug("Configuration Received");
-        }
-        catch (Exception e)
-        {
-            DebugError($"Configuration error: {e.Message}", false);
-        }
+        Debug("Configuration Received");
     }
-
-    #endregion
 }

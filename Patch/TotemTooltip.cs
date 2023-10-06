@@ -1,23 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using Extensions;
-using Extensions.Valheim;
-using HarmonyLib;
-using UnityEngine;
+﻿using System.Text;
 using static System.Enum;
-using static TotemsOfUndying.Plugin;
-using static ItemDrop;
-using static ItemDrop.ItemData;
 
 namespace TotemsOfUndying.Patch;
 
 [HarmonyPatch]
 public class TotemTooltip
 {
-    [HarmonyPatch(typeof(ItemData), nameof(ItemData.GetTooltip),
-        new Type[4] { typeof(ItemData), typeof(int), typeof(bool), typeof(float) })]
-    [HarmonyPostfix, HarmonyWrapSafe]
+    [HarmonyPatch(typeof(ItemData), nameof(ItemData.GetTooltip), typeof(ItemData), typeof(int), typeof(bool),
+        typeof(float))]
+    [HarmonyPostfix] [HarmonyWrapSafe]
     private static void GetTotemTooltip(ItemData item,
         int qualityLevel, bool crafting, float worldLevel, ref string __result)
     {
@@ -32,7 +23,7 @@ public class TotemTooltip
             return;
         }
 
-        string tooltipSe = totem.GetSE().GetTooltipString();
+        var tooltipSe = totem.GetSE().GetTooltipString();
         var bestBiome = $"<color=orange>{(totem.config.allBiomes
             ? "$allBiomes".Localize()
             : totem.config.bestBiome.GetLocalizationKey().Localize())}</color>";
@@ -64,23 +55,23 @@ public class TotemTooltip
                     !totem
                         .config
                         .aditionalBiomes.Select(x => x.ToString()).Contains(x))
-                .Select(x => ((Heightmap.Biome)Parse(typeof(Heightmap.Biome), x)).GetLocalizationKey().Localize())
+                .Select(x => ((Biome)Parse(typeof(Biome), x)).GetLocalizationKey().Localize())
                 .ToList();
             if (wrongBiomes.Count > 0)
             {
                 var wrongBiomesStr = wrongBiomes.GetString("</color>, <color=orange>");
                 sb.AppendLine(
                     $"<color=#ff8080ff>{totem.config.healthWrongBiome}</color> {"$healthAfterBiome".Localize()} "
-                              + $"<color=orange>"
-                              + $"{wrongBiomesStr}"
-                              + $"</color>");
+                    + $"<color=orange>"
+                    + $"{wrongBiomesStr}"
+                    + $"</color>");
                 sb.AppendLine(
                     $"<color=yellow>{totem.config.staminaWrongBiome}</color> {"$staminaAfterBiome".Localize()} "
                     + $"<color=orange>"
                     + $"{wrongBiomesStr}"
                     + $"</color>");
             }
-            
+
             if (badBiome != "[biome_none]")
                 sb.AppendLine($"{"$dontWorkInBiome".Localize()} <color=orange>{badBiome}</color> ");
 
