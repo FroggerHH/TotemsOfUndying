@@ -16,7 +16,7 @@ public class UseTotem
                     if (itemData.m_shared.m_name.StartsWith("$item_TotemOf"))
                     {
                         Debug("Try to use " + itemData.LocalizeName());
-                        (plugin as Plugin).UseTotem(itemData, itemData.m_shared.m_name);
+                        GetPlugin<Plugin>().UseTotem(itemData, itemData.m_shared.m_name);
                         return;
                     }
         }

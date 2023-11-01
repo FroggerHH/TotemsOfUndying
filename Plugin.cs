@@ -14,7 +14,7 @@ internal class Plugin : BaseUnityPlugin
 
     internal const string ModName = "TotemsOfUndying",
         ModAuthor = "Frogger",
-        ModVersion = "2.2.0",
+        ModVersion = "2.3.0",
         ModGUID = "com." + ModAuthor + ModName;
 
     #endregion
@@ -24,12 +24,11 @@ internal class Plugin : BaseUnityPlugin
     internal static Totem BonemassTotem;
     internal static Totem ModerTotem;
     internal static Totem YagluthTotem;
-    internal static AssetBundle bundle;
 
     private void Awake()
     {
         CreateMod(this, ModName, ModAuthor, ModVersion);
-        mod.OnConfigurationChanged += UpdateConfiguration;
+        OnConfigurationChanged += UpdateConfiguration;
         bundle = PrefabManager.RegisterAssetBundle("totems");
 
         #region Totems

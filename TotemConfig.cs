@@ -129,68 +129,68 @@ public class TotemConfig
 
     public void Bind()
     {
-        maxCountInInventoryConfig = mod.config(name, "Max count in inventory", maxCountInInventory,
+        maxCountInInventoryConfig = config(name, "Max count in inventory", maxCountInInventory,
             new ConfigDescription("",
                 new AcceptableValueRange<int>(1, 25), new ConfigurationManagerAttributes()));
 
-        fallDamageModifierConfig = mod.config(name, "Fall damage modifier applied by boss buff", fallDamageModifier,
+        fallDamageModifierConfig = config(name, "Fall damage modifier applied by boss buff", fallDamageModifier,
             new ConfigDescription("",
                 new AcceptableValueRange<float>(-5, 5), new ConfigurationManagerAttributes()));
 
-        damageModifierConfig = mod.config(name, "Damage modifier applied by boss buff", damageModifier,
+        damageModifierConfig = config(name, "Damage modifier applied by boss buff", damageModifier,
             new ConfigDescription("",
                 new AcceptableValueRange<float>(-5, 5), new ConfigurationManagerAttributes()));
 
-        speedModifierConfig = mod.config(name, "Speed modifier applied by boss buff", speedModifier,
+        speedModifierConfig = config(name, "Speed modifier applied by boss buff", speedModifier,
             new ConfigDescription("",
                 new AcceptableValueRange<float>(-2, 2), new ConfigurationManagerAttributes()));
 
-        healthRightBiomeConfig = mod.config(name, "Health after dying in best biome", healthRightBiome,
+        healthRightBiomeConfig = config(name, "Health after dying in best biome", healthRightBiome,
             new ConfigDescription("",
                 new AcceptableValueRange<int>(0, 1000), new ConfigurationManagerAttributes()));
 
-        bossBuffTtlConfig = mod.config(name, "Boss buff time", bossBuffTtl, new ConfigDescription("",
+        bossBuffTtlConfig = config(name, "Boss buff time", bossBuffTtl, new ConfigDescription("",
             new AcceptableValueRange<int>(1, 30), new ConfigurationManagerAttributes()));
 
-        healthWrongBiomeConfig = mod.config(name, "Health after dying in other biome", healthWrongBiome,
+        healthWrongBiomeConfig = config(name, "Health after dying in other biome", healthWrongBiome,
             new ConfigDescription("",
                 new AcceptableValueRange<int>(0, 1000), new ConfigurationManagerAttributes()));
 
-        staminaRightBiomeConfig = mod.config(name, "Stamina after dying in best biome", staminaRightBiome,
+        staminaRightBiomeConfig = config(name, "Stamina after dying in best biome", staminaRightBiome,
             new ConfigDescription("",
                 new AcceptableValueRange<int>(0, 1000), new ConfigurationManagerAttributes()));
 
-        staminaWrongBiomeConfig = mod.config(name, "Stamina after dying in other biome", staminaWrongBiome,
+        staminaWrongBiomeConfig = config(name, "Stamina after dying in other biome", staminaWrongBiome,
             new ConfigDescription("",
                 new AcceptableValueRange<int>(0, 1000), new ConfigurationManagerAttributes()));
 
-        mainBiomeConfig = mod.config(name, "Best biome", bestBiome.ToString(),
+        mainBiomeConfig = config(name, "Best biome", bestBiome.ToString(),
             new ConfigDescription("Related to healthBestBiome, healthWrongBiome, staminaBestBiome etc.",
                 new AcceptableValueList<string>(AllBiomesStrings)));
 
-        badBiomeConfig = mod.config(name, "Bad biome", badBiome.ToString(), new ConfigDescription(
+        badBiomeConfig = config(name, "Bad biome", badBiome.ToString(), new ConfigDescription(
             "Totem wouldn't work in this biome",
             new AcceptableValueList<string>(AllBiomesStrings)));
 
-        additionalBiomesConfig = mod.config(name, "Additional biomes", "",
+        additionalBiomesConfig = config(name, "Additional biomes", "",
             new ConfigDescription(
                 "The player will receive the same stats as when activated in the best biome multiplied by additionalBiomeStatsModifier"));
 
-        allBiomesConfig = mod.config(name, "Work in all biomes", allBiomes, new ConfigDescription(""));
-        teleportableConfig = mod.config(name, "Teleportable", teleportable,
+        allBiomesConfig = config(name, "Work in all biomes", allBiomes, new ConfigDescription(""));
+        teleportableConfig = config(name, "Teleportable", teleportable,
             new ConfigDescription("Is it possible to transfer an item through the portal"));
 
-        buffsConfig = mod.config(name, "Buffs", "",
+        buffsConfig = config(name, "Buffs", "",
             new ConfigDescription(
                 "The effects that the player will receive when activating the totem of the best biome."));
 
-        chanceToActivateBuffInAdditionalBiomeConfig = mod.config(name, "Chance to activate buf in additional biome",
+        chanceToActivateBuffInAdditionalBiomeConfig = config(name, "Chance to activate buf in additional biome",
             chanceToActivateBufInAdditionalBiome,
             new ConfigDescription(
                 "The chance that the player will receive buffs when activated in an additional biome.",
                 new AcceptableValueRange<int>(0, 100), new ConfigurationManagerAttributes()));
 
-        additionalBiomeStatsModifierConfig = mod.config(name, "Additional biome stats modifier",
+        additionalBiomeStatsModifierConfig = config(name, "Additional biome stats modifier",
             additionalBiomeStatsModifier,
             new ConfigDescription(
                 "When activating a totem in an additional biome, the player will receive the same characteristics as when activated in the best biome, but multiplied by this value.",
