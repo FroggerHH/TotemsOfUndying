@@ -1,11 +1,13 @@
-﻿using System.IO;
+﻿#nullable enable
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using YamlDotNet.Serialization;
 
-#nullable enable
 namespace TotemsOfUndying.LocalizationManager;
 
 [PublicAPI]
@@ -37,7 +39,7 @@ public class Localizer
                     types = e.Types.Where(t => t != null).Select(t => t.GetTypeInfo());
                 }
 
-                _plugin = (BaseUnityPlugin)BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(types.First(t =>
+                _plugin = (BaseUnityPlugin)Chainloader.ManagerObject.GetComponent(types.First(t =>
                     t.IsClass && typeof(BaseUnityPlugin).IsAssignableFrom(t)));
             }
 
@@ -138,7 +140,7 @@ public class Localizer
         }
 
         Dictionary<string, string>? localizationTexts = new DeserializerBuilder().IgnoreFields().Build()
-            .Deserialize<Dictionary<string, string>?>(System.Text.Encoding.UTF8.GetString(englishAssemblyData));
+            .Deserialize<Dictionary<string, string>?>(Encoding.UTF8.GetString(englishAssemblyData));
         if (localizationTexts is null)
         {
             throw new Exception(
@@ -153,7 +155,7 @@ public class Localizer
                 localizationData = File.ReadAllText(localizationFile1);
             } else if (LoadTranslationFromAssembly(language) is { } languageAssemblyData)
             {
-                localizationData = System.Text.Encoding.UTF8.GetString(languageAssemblyData);
+                localizationData = Encoding.UTF8.GetString(languageAssemblyData);
             }
         }
 

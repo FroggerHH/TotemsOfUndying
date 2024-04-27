@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 
 namespace TotemsOfUndying.StatusEffectManager;
@@ -54,9 +55,9 @@ public class CustomSE
     }
 
     [Description("Sets the icon for the StatusEffect. Must be 64x64")]
-    public Sprite? IconSprite = null;
+    public Sprite? IconSprite;
 
-    private string? IconName = null;
+    private string? IconName;
 
     private LocalizeKey? _name;
 
@@ -189,7 +190,7 @@ public class CustomSE
                     types = e.Types.Where(t => t != null).Select(t => t.GetTypeInfo());
                 }
 
-                _plugin = (BaseUnityPlugin)BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(types.First(t =>
+                _plugin = (BaseUnityPlugin)Chainloader.ManagerObject.GetComponent(types.First(t =>
                     t.IsClass && typeof(BaseUnityPlugin).IsAssignableFrom(t)));
             }
 
@@ -413,7 +414,7 @@ public static class EffectManager
             }
             catch (Exception)
             {
-                DebugWarning($"BROKE");
+                DebugWarning("BROKE");
             }
         }
     }

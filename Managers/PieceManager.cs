@@ -1,13 +1,16 @@
-﻿using System.ComponentModel;
+﻿#nullable enable
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
+using Component = UnityEngine.Component;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 
-#nullable enable
 namespace TotemsOfUndying.PieceManager;
 
 [PublicAPI]
@@ -178,7 +181,7 @@ public class BuildPiece
     public SpecialProperties SpecialProperties;
 
     [Description("Specifies a config entry which toggles whether a recipe is active.")]
-    public ConfigEntryBase? RecipeIsActive = null;
+    public ConfigEntryBase? RecipeIsActive;
 
     private LocalizeKey? _name;
 
@@ -263,7 +266,7 @@ public class BuildPiece
         Type? configManagerType = bepinexConfigManager?.GetType("ConfigurationManager.ConfigurationManager");
         configManager = configManagerType == null
             ? null
-            : BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(configManagerType);
+            : Chainloader.ManagerObject.GetComponent(configManagerType);
 
         void ReloadConfigDisplay()
         {
@@ -347,16 +350,16 @@ public class BuildPiece
                 cfg.tools.SettingChanged += (_, _) =>
                 {
                     Inventory[] inventories = Player.s_players.Select(p => p.GetInventory())
-                        .Concat(Object.FindObjectsOfType<Container>().Select(c => c.GetInventory()))
+                        .Concat(FindObjectsOfType<Container>().Select(c => c.GetInventory()))
                         .Where(c => c is not null).ToArray();
                     Dictionary<string, List<PieceTable>> tools = ObjectDB.instance.m_items
                         .Select(p => p.GetComponent<ItemDrop>()).Where(c => c && c.GetComponent<ZNetView>())
-                        .Concat(ItemDrop.s_instances)
+                        .Concat(s_instances)
                         .Select(i =>
-                            new KeyValuePair<string, ItemDrop.ItemData>(Utils.GetPrefabName(i.gameObject),
+                            new KeyValuePair<string, ItemData>(Utils.GetPrefabName(i.gameObject),
                                 i.m_itemData))
                         .Concat(inventories.SelectMany(i => i.GetAllItems()).Select(i =>
-                            new KeyValuePair<string, ItemDrop.ItemData>(i.m_dropPrefab.name, i)))
+                            new KeyValuePair<string, ItemData>(i.m_dropPrefab.name, i)))
                         .Where(kv => kv.Value.m_shared.m_buildPieces).GroupBy(kv => kv.Key).ToDictionary(g => g.Key,
                             g => g.Select(kv => kv.Value.m_shared.m_buildPieces).Distinct().ToList());
 
@@ -521,7 +524,7 @@ public class BuildPiece
                         Piece.Requirement[] requirements =
                             SerializedRequirements.toPieceReqs(new SerializedRequirements(cfg.craft.Value));
                         piecePrefab.m_resources = requirements;
-                        foreach (Piece instantiatedPiece in Object.FindObjectsOfType<Piece>())
+                        foreach (Piece instantiatedPiece in FindObjectsOfType<Piece>())
                         {
                             if (instantiatedPiece.m_name == pieceName)
                             {
@@ -727,7 +730,7 @@ public class BuildPiece
         sideLight.cullingMask = 1 << layer;
         sideLight.intensity = lightIntensity;
 
-        GameObject visual = Object.Instantiate(prefab);
+        GameObject visual = Instantiate(prefab);
         foreach (Transform child in visual.GetComponentsInChildren<Transform>())
         {
             child.gameObject.layer = layer;
@@ -776,12 +779,12 @@ public class BuildPiece
         camera.targetTexture.Release();
         camera.gameObject.SetActive(false);
         visual.SetActive(false);
-        Object.DestroyImmediate(visual);
+        DestroyImmediate(visual);
 
-        Object.Destroy(camera);
-        Object.Destroy(sideLight);
-        Object.Destroy(camera.gameObject);
-        Object.Destroy(sideLight.gameObject);
+        Destroy(camera);
+        Destroy(sideLight);
+        Destroy(camera.gameObject);
+        Destroy(sideLight.gameObject);
     }
 
     private static void DrawConfigTable(ConfigEntryBase cfg)
@@ -907,7 +910,7 @@ public class BuildPiece
 
     private static Localization english => _english ??= LocalizationCache.ForLanguage("English");
 
-    internal static BaseUnityPlugin? _plugin = null!;
+    internal static BaseUnityPlugin? _plugin;
 
     internal static BaseUnityPlugin plugin
     {
@@ -924,7 +927,7 @@ public class BuildPiece
                 types = e.Types.Where(t => t != null).Select(t => t.GetTypeInfo());
             }
 
-            _plugin = (BaseUnityPlugin)BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(types.First(t =>
+            _plugin = (BaseUnityPlugin)Chainloader.ManagerObject.GetComponent(types.First(t =>
                 t.IsClass && typeof(BaseUnityPlugin).IsAssignableFrom(t)));
 
             return _plugin;
@@ -970,7 +973,7 @@ public class BuildPiece
 
 public static class GoExtensions
 {
-    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : UnityEngine.Component =>
+    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component =>
         gameObject.GetComponent<T>() ?? gameObject.AddComponent<T>();
 }
 
@@ -1171,7 +1174,7 @@ public class AdminSyncing
             ZPackage compressedPackage = new();
             compressedPackage.Write(4);
             MemoryStream output = new();
-            using (DeflateStream deflateStream = new(output, System.IO.Compression.CompressionLevel.Optimal))
+            using (DeflateStream deflateStream = new(output, CompressionLevel.Optimal))
             {
                 deflateStream.Write(rawData, 0, rawData.Length);
             }
@@ -1245,7 +1248,7 @@ public class AdminSyncing
                 string pieceName = piecePrefab.m_name;
                 string localizedName = Localization.instance.Localize(pieceName).Trim();
                 if (!ObjectDB.instance || ObjectDB.instance.GetItemPrefab("YagluthDrop") == null) continue;
-                foreach (Piece instantiatedPiece in UnityEngine.Object.FindObjectsOfType<Piece>())
+                foreach (Piece instantiatedPiece in FindObjectsOfType<Piece>())
                 {
                     if (admin)
                     {
@@ -1552,7 +1555,7 @@ public static class PiecePrefabManager
     {
         Transform categoryRoot = Hud.instance.m_pieceCategoryRoot.transform;
 
-        GameObject newTab = Object.Instantiate(Hud.instance.m_pieceCategoryTabs[0], categoryRoot);
+        GameObject newTab = Instantiate(Hud.instance.m_pieceCategoryTabs[0], categoryRoot);
         newTab.SetActive(false);
         newTab.GetOrAddComponent<UIInputHandler>().m_onLeftDown += Hud.instance.OnLeftClickCategory;
 

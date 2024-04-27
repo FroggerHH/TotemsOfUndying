@@ -1,4 +1,6 @@
 ﻿#nullable enable
+using UnityEngine.Rendering;
+
 namespace TotemsOfUndying.PieceManager;
 
 [PublicAPI]
@@ -8,7 +10,7 @@ public static class MaterialReplacer
     private static readonly Dictionary<string, Material> OriginalMaterials;
     private static readonly Dictionary<GameObject, ShaderType> ObjectsForShaderReplace;
     private static readonly HashSet<Shader> CachedShaders = new();
-    private static bool hasRun = false;
+    private static bool hasRun;
 
     static MaterialReplacer()
     {
@@ -58,7 +60,7 @@ public static class MaterialReplacer
     [HarmonyPriority(Priority.VeryHigh)]
     private static void ReplaceAllMaterialsWithOriginal()
     {
-        if (UnityEngine.SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null
+        if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null
             || hasRun) return;
 
         if (OriginalMaterials.Count == 0) GetAllMaterials();

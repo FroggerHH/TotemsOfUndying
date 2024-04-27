@@ -1,13 +1,14 @@
-﻿using System.ComponentModel;
+﻿#nullable enable
+using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 
-#nullable enable
 namespace TotemsOfUndying.ItemManager;
 
 [PublicAPI]
@@ -50,7 +51,7 @@ public class RequiredResourceList
     public readonly List<Requirement> Requirements = new();
 
     public bool
-        Free = false; // If Requirements empty and Free is true, then it costs nothing. If Requirements empty and Free is false, then it won't be craftable.
+        Free; // If Requirements empty and Free is true, then it costs nothing. If Requirements empty and Free is false, then it won't be craftable.
 
     public void Add(string itemName, int amount, int quality = 0) =>
         Requirements.Add(new Requirement { itemName = itemName, amount = amount, quality = quality });
@@ -78,18 +79,18 @@ public class ItemRecipe
     public readonly RequiredResourceList RequiredUpgradeItems = new();
     public readonly CraftingStationList Crafting = new();
     public int CraftAmount = 1;
-    public bool RequireOnlyOneIngredient = false;
+    public bool RequireOnlyOneIngredient;
     public float QualityResultAmountMultiplier = 1;
-    public ConfigEntryBase? RecipeIsActive = null;
+    public ConfigEntryBase? RecipeIsActive;
 }
 
 [PublicAPI]
 public class Trade
 {
     public Trader Trader = Trader.None;
-    public uint Price = 0;
+    public uint Price;
     public uint Stack = 1;
-    public string? RequiredGlobalKey = null;
+    public string? RequiredGlobalKey;
 }
 
 [PublicAPI]
@@ -198,7 +199,7 @@ public class Item
     private static readonly ConditionalWeakTable<Piece.Requirement, RequirementQuality> requirementQuality = new();
 
     public static Configurability DefaultConfigurability = Configurability.Full;
-    public Configurability? Configurable = null;
+    public Configurability? Configurable;
     private Configurability configurability => Configurable ?? DefaultConfigurability;
     private Configurability configurationVisible = Configurability.Full;
 
@@ -285,7 +286,7 @@ public class Item
                 return name;
             }
 
-            ItemDrop.ItemData.SharedData data = Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
+            ItemData.SharedData data = Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
             if (data.m_name.StartsWith("$"))
             {
                 _name = new LocalizeKey(data.m_name);
@@ -311,7 +312,7 @@ public class Item
                 return description;
             }
 
-            ItemDrop.ItemData.SharedData data = Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
+            ItemData.SharedData data = Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
             if (data.m_description.StartsWith("$"))
             {
                 _description = new LocalizeKey(data.m_description);
@@ -789,10 +790,10 @@ public class Item
                     item.statsConfigs.Clear();
 
                     void statcfg<T>(string configName, string description,
-                        Func<ItemDrop.ItemData.SharedData, T> readDefault,
-                        Action<ItemDrop.ItemData.SharedData, T> setValue)
+                        Func<ItemData.SharedData, T> readDefault,
+                        Action<ItemData.SharedData, T> setValue)
                     {
-                        ItemDrop.ItemData.SharedData shared = item.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
+                        ItemData.SharedData shared = item.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
                         ConfigEntry<T> cfg = config(englishName, configName, readDefault(shared),
                             new ConfigDescription(description, null,
                                 new ConfigurationManagerAttributes
@@ -818,20 +819,20 @@ public class Item
                         };
                     }
 
-                    ItemDrop.ItemData.SharedData shared = item.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
-                    ItemDrop.ItemData.ItemType itemType = shared.m_itemType;
+                    ItemData.SharedData shared = item.Prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
+                    ItemData.ItemType itemType = shared.m_itemType;
 
                     statcfg("Weight", $"Weight of {englishName}.", shared => shared.m_weight,
                         (shared, value) => shared.m_weight = value);
                     statcfg("Trader Value", $"Trader value of {englishName}.", shared => shared.m_value,
                         (shared, value) => shared.m_value = value);
 
-                    if (itemType is ItemDrop.ItemData.ItemType.Bow or ItemDrop.ItemData.ItemType.Chest
-                        or ItemDrop.ItemData.ItemType.Hands or ItemDrop.ItemData.ItemType.Helmet
-                        or ItemDrop.ItemData.ItemType.Legs or ItemDrop.ItemData.ItemType.Shield
-                        or ItemDrop.ItemData.ItemType.Shoulder or ItemDrop.ItemData.ItemType.Tool
-                        or ItemDrop.ItemData.ItemType.OneHandedWeapon or ItemDrop.ItemData.ItemType.TwoHandedWeapon
-                        or ItemDrop.ItemData.ItemType.TwoHandedWeaponLeft)
+                    if (itemType is ItemData.ItemType.Bow or ItemData.ItemType.Chest
+                        or ItemData.ItemType.Hands or ItemData.ItemType.Helmet
+                        or ItemData.ItemType.Legs or ItemData.ItemType.Shield
+                        or ItemData.ItemType.Shoulder or ItemData.ItemType.Tool
+                        or ItemData.ItemType.OneHandedWeapon or ItemData.ItemType.TwoHandedWeapon
+                        or ItemData.ItemType.TwoHandedWeaponLeft)
                     {
                         statcfg("Durability", $"Durability of {englishName}.", shared => shared.m_maxDurability,
                             (shared, value) => shared.m_maxDurability = value);
@@ -842,9 +843,9 @@ public class Item
                             shared => shared.m_movementModifier, (shared, value) => shared.m_movementModifier = value);
                     }
 
-                    if (itemType is ItemDrop.ItemData.ItemType.Bow or ItemDrop.ItemData.ItemType.Shield
-                        or ItemDrop.ItemData.ItemType.OneHandedWeapon or ItemDrop.ItemData.ItemType.TwoHandedWeapon
-                        or ItemDrop.ItemData.ItemType.TwoHandedWeaponLeft)
+                    if (itemType is ItemData.ItemType.Bow or ItemData.ItemType.Shield
+                        or ItemData.ItemType.OneHandedWeapon or ItemData.ItemType.TwoHandedWeapon
+                        or ItemData.ItemType.TwoHandedWeaponLeft)
                     {
                         statcfg("Block Armor", $"Block armor of {englishName}.", shared => shared.m_blockPower,
                             (shared, value) => shared.m_blockPower = value);
@@ -858,9 +859,9 @@ public class Item
                             (shared, value) => shared.m_deflectionForcePerLevel = value);
                         statcfg("Parry Bonus", $"Parry bonus of {englishName}.", shared => shared.m_timedBlockBonus,
                             (shared, value) => shared.m_timedBlockBonus = value);
-                    } else if (itemType is ItemDrop.ItemData.ItemType.Chest or ItemDrop.ItemData.ItemType.Hands
-                               or ItemDrop.ItemData.ItemType.Helmet or ItemDrop.ItemData.ItemType.Legs
-                               or ItemDrop.ItemData.ItemType.Shoulder)
+                    } else if (itemType is ItemData.ItemType.Chest or ItemData.ItemType.Hands
+                               or ItemData.ItemType.Helmet or ItemData.ItemType.Legs
+                               or ItemData.ItemType.Shoulder)
                     {
                         statcfg("Armor", $"Armor of {englishName}.", shared => shared.m_armor,
                             (shared, value) => shared.m_armor = value);
@@ -868,15 +869,15 @@ public class Item
                             shared => shared.m_armorPerLevel, (shared, value) => shared.m_armorPerLevel = value);
                     }
 
-                    if (shared.m_skillType is Skills.SkillType.Axes or Skills.SkillType.Pickaxes)
+                    if (shared.m_skillType is SkillType.Axes or SkillType.Pickaxes)
                     {
                         statcfg("Tool tier", $"Tool tier of {englishName}.", shared => shared.m_toolTier,
                             (shared, value) => shared.m_toolTier = value);
                     }
 
-                    if (itemType is ItemDrop.ItemData.ItemType.Shield or ItemDrop.ItemData.ItemType.Chest
-                        or ItemDrop.ItemData.ItemType.Hands or ItemDrop.ItemData.ItemType.Helmet
-                        or ItemDrop.ItemData.ItemType.Legs or ItemDrop.ItemData.ItemType.Shoulder)
+                    if (itemType is ItemData.ItemType.Shield or ItemData.ItemType.Chest
+                        or ItemData.ItemType.Hands or ItemData.ItemType.Helmet
+                        or ItemData.ItemType.Legs or ItemData.ItemType.Shoulder)
                     {
                         Dictionary<HitData.DamageType, DamageModifier> modifiers =
                             shared.m_damageModifiers.ToDictionary(d => d.m_type,
@@ -920,7 +921,7 @@ public class Item
                         }
                     }
 
-                    if (itemType is ItemDrop.ItemData.ItemType.Consumable && shared.m_food > 0)
+                    if (itemType is ItemData.ItemType.Consumable && shared.m_food > 0)
                     {
                         statcfg("Health", $"Health value of {englishName}.", shared => shared.m_food,
                             (shared, value) => shared.m_food = value);
@@ -934,7 +935,7 @@ public class Item
                             (shared, value) => shared.m_foodRegen = value);
                     }
 
-                    if (shared.m_skillType is Skills.SkillType.BloodMagic)
+                    if (shared.m_skillType is SkillType.BloodMagic)
                     {
                         statcfg("Health Cost", $"Health cost of {englishName}.",
                             shared => shared.m_attack.m_attackHealth,
@@ -944,15 +945,15 @@ public class Item
                             (shared, value) => shared.m_attack.m_attackHealthPercentage = value);
                     }
 
-                    if (shared.m_skillType is Skills.SkillType.BloodMagic or Skills.SkillType.ElementalMagic)
+                    if (shared.m_skillType is SkillType.BloodMagic or SkillType.ElementalMagic)
                     {
                         statcfg("Eitr Cost", $"Eitr cost of {englishName}.", shared => shared.m_attack.m_attackEitr,
                             (shared, value) => shared.m_attack.m_attackEitr = value);
                     }
 
-                    if (itemType is ItemDrop.ItemData.ItemType.OneHandedWeapon
-                        or ItemDrop.ItemData.ItemType.TwoHandedWeapon or ItemDrop.ItemData.ItemType.TwoHandedWeaponLeft
-                        or ItemDrop.ItemData.ItemType.Bow)
+                    if (itemType is ItemData.ItemType.OneHandedWeapon
+                        or ItemData.ItemType.TwoHandedWeapon or ItemData.ItemType.TwoHandedWeaponLeft
+                        or ItemData.ItemType.Bow)
                     {
                         statcfg("Knockback", $"Knockback of {englishName}.", shared => shared.m_attackForce,
                             (shared, value) => shared.m_attackForce = value);
@@ -994,7 +995,7 @@ public class Item
                         SetDmg("Spirit", dmg => dmg.m_spirit,
                             (ref HitData.DamageTypes dmg, float val) => dmg.m_spirit = val);
 
-                        if (itemType is ItemDrop.ItemData.ItemType.Bow)
+                        if (itemType is ItemData.ItemType.Bow)
                         {
                             statcfg("Projectiles", $"Number of projectiles that {englishName} shoots at once.",
                                 shared => shared.m_attack.m_projectileBursts,
@@ -1097,7 +1098,7 @@ public class Item
 
         configManager = configManagerType == null
             ? null
-            : BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(configManagerType);
+            : Chainloader.ManagerObject.GetComponent(configManagerType);
 
         foreach (Item item in registeredItems)
         {
@@ -1196,17 +1197,17 @@ public class Item
         }
     }
 
-    public static void ApplyToAllInstances(GameObject prefab, Action<ItemDrop.ItemData> callback)
+    public static void ApplyToAllInstances(GameObject prefab, Action<ItemData> callback)
     {
         callback(prefab.GetComponent<ItemDrop>().m_itemData);
 
         string itemName = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_name;
 
         Inventory[] inventories = Player.s_players.Select(p => p.GetInventory())
-            .Concat(UnityEngine.Object.FindObjectsOfType<Container>().Select(c => c.GetInventory()))
+            .Concat(FindObjectsOfType<Container>().Select(c => c.GetInventory()))
             .Where(c => c is not null).ToArray();
-        foreach (ItemDrop.ItemData itemdata in ObjectDB.instance.m_items.Select(p => p.GetComponent<ItemDrop>())
-                     .Where(c => c && c.GetComponent<ZNetView>()).Concat(ItemDrop.s_instances).Select(i => i.m_itemData)
+        foreach (ItemData itemdata in ObjectDB.instance.m_items.Select(p => p.GetComponent<ItemDrop>())
+                     .Where(c => c && c.GetComponent<ZNetView>()).Concat(s_instances).Select(i => i.m_itemData)
                      .Concat(inventories.SelectMany(i => i.GetAllItems())))
         {
             if (itemdata.m_shared.m_name == itemName)
@@ -1216,7 +1217,7 @@ public class Item
         }
     }
 
-    public void ApplyToAllInstances(Action<ItemDrop.ItemData> callback) => ApplyToAllInstances(Prefab, callback);
+    public void ApplyToAllInstances(Action<ItemData> callback) => ApplyToAllInstances(Prefab, callback);
 
     private static string getInternalName<T>(T value) where T : struct =>
         ((InternalName)typeof(T).GetMember(value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First())
@@ -1360,7 +1361,7 @@ public class Item
                 || ZoneSystem.instance.GetGlobalKey(tradeItem.m_requiredGlobalKey)));
     }
 
-    internal static void Patch_OnAddSmelterInput(ItemDrop.ItemData item, bool __result)
+    internal static void Patch_OnAddSmelterInput(ItemData item, bool __result)
     {
         if (__result)
         {
@@ -1622,11 +1623,11 @@ public class Item
             GameObject visual;
             if (item.transform.Find("attach") is { } attach)
             {
-                visual = UnityEngine.Object.Instantiate(attach.gameObject);
+                visual = Instantiate(attach.gameObject);
             } else
             {
                 ZNetView.m_forceDisableInit = true;
-                visual = UnityEngine.Object.Instantiate(item.gameObject);
+                visual = Instantiate(item.gameObject);
                 ZNetView.m_forceDisableInit = false;
             }
 
@@ -1668,11 +1669,11 @@ public class Item
 
             item.m_itemData.m_shared.m_icons = new[] { Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f)) };
 
-            UnityEngine.Object.DestroyImmediate(visual);
+            DestroyImmediate(visual);
             camera.targetTexture.Release();
 
-            UnityEngine.Object.Destroy(camera);
-            UnityEngine.Object.Destroy(topLight);
+            Destroy(camera);
+            Destroy(topLight);
         }
 
         IEnumerator Delay()
@@ -2114,7 +2115,7 @@ public class Item
                     types = e.Types.Where(t => t != null).Select(t => t.GetTypeInfo());
                 }
 
-                _plugin = (BaseUnityPlugin)BepInEx.Bootstrap.Chainloader.ManagerObject.GetComponent(types.First(t =>
+                _plugin = (BaseUnityPlugin)Chainloader.ManagerObject.GetComponent(types.First(t =>
                     t.IsClass && typeof(BaseUnityPlugin).IsAssignableFrom(t)));
             }
 
@@ -2420,7 +2421,7 @@ public static class PrefabManager
                 }
             }
 
-            ItemDrop.ItemData.SharedData shared = prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
+            ItemData.SharedData shared = prefab.GetComponent<ItemDrop>().m_itemData.m_shared;
             RegisterStatusEffect(shared.m_attackStatusEffect);
             RegisterStatusEffect(shared.m_consumeStatusEffect);
             RegisterStatusEffect(shared.m_equipStatusEffect);
@@ -2459,7 +2460,7 @@ public class Conversion
 
     public string Input = null!;
     public ConversionPiece Piece;
-    internal string? customPiece = null;
+    internal string? customPiece;
 
     public string? Custom
     {

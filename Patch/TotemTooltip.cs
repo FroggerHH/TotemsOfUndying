@@ -6,24 +6,22 @@ namespace TotemsOfUndying.Patch;
 [HarmonyPatch]
 public class TotemTooltip
 {
-    [HarmonyPatch(typeof(ItemData), nameof(ItemData.GetTooltip), typeof(ItemData), typeof(int), typeof(bool),
-        typeof(float))]
-    [HarmonyPostfix] [HarmonyWrapSafe]
-    private static void GetTotemTooltip(ItemData item,
-        int qualityLevel, bool crafting, float worldLevel, ref string __result)
+    [HarmonyPatch(typeof(ItemData), nameof(ItemData.GetTooltip),
+         [typeof(ItemData), typeof(int), typeof(bool), typeof(float)]
+     ), HarmonyPostfix]
+    static void ItemDropItemDataGetTooltip(ItemData item, int qualityLevel, bool crafting, float worldLevel,
+        ref string __result)
     {
         var totem = GetTotem(item.m_shared.m_name);
         if (totem == null) return;
         var sb = new StringBuilder();
         if (!Input.GetKey(KeyCode.LeftShift))
         {
-            sb.AppendLine();
-            sb.AppendLine("$holdShift".Localize());
-            __result += sb.ToString();
+            __result += "\n$holdShift".Localize();
             return;
         }
 
-        var tooltipSe = totem.GetSE().GetTooltipString();
+        // var tooltipSe = totem.GetSE().GetTooltipString();
         var bestBiome = $"<color=orange>{(totem.config.allBiomes
             ? "$allBiomes".Localize()
             : totem.config.bestBiome.GetLocalizationKey().Localize())}</color>";
@@ -38,7 +36,7 @@ public class TotemTooltip
         if (totem.config.allBiomes == false)
         {
             var lessEffect = Math.Round(1 / totem.config.additionalBiomeStatsModifier, 2);
-            if (lessEffect != 1)
+            if (Math.Abs(lessEffect - 1) > 0.2f)
             {
                 var lessEffectStr = $"{"$lessEffectInBiomes".Localize()} "
                                     + $"<color=yellow>{lessEffect}</color> {"$timesInBiomes".Localize()} "
@@ -90,7 +88,7 @@ public class TotemTooltip
 
         //sb.AppendLine();
         sb.AppendLine($"{"$bossSE_effects".Localize()} {bestBiome}");
-        sb.AppendLine(tooltipSe);
+        // sb.AppendLine(tooltipSe);
         __result += sb.ToString();
     }
 }

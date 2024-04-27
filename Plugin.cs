@@ -12,7 +12,7 @@ internal class Plugin : BaseUnityPlugin
 {
     private const string ModName = "TotemsOfUndying",
         ModAuthor = "Frogger",
-        ModVersion = "2.3.1",
+        ModVersion = "2.3.2",
         ModGUID = $"com.{ModAuthor}.{ModName}";
 
     private static Totem EikthyrTotem;
