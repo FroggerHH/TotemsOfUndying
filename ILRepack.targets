@@ -5,10 +5,8 @@
         <ItemGroup>
             <InputAssemblies Include="$(TargetPath)"/>
             <InputAssemblies Include="D:\Slava\Coding\Utils\JFUtils.dll"/>
-            <InputAssemblies Include="D:\Slava\Coding\Utils\ItemManager.dll"/>
-            <InputAssemblies Include="D:\Slava\Coding\Utils\PieceManager.dll"/>
             <InputAssemblies Include="D:\Slava\Coding\Utils\StatusEffectManager.dll"/>
-            <InputAssemblies Include="D:\Slava\Coding\Utils\LocalizationManager.dll"/>
+            <InputAssemblies Include="$(OutputPath)YamlDotNet.dll"/>
         </ItemGroup>
         <ILRepack Parallel="true" DebugInfo="true" Internalize="true" InputAssemblies="@(InputAssemblies)"
                   OutputFile="$(TargetPath)" TargetKind="SameAsPrimaryAssembly" LibraryPath="$(OutputPath)"/>

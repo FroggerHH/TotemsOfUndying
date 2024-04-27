@@ -1,33 +1,29 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BepInEx;
-using ItemManager;
-using LocalizationManager;
-using PieceManager;
-using StatusEffectManager;
+using TotemsOfUndying.ItemManager;
+using TotemsOfUndying.LocalizationManager;
+using TotemsOfUndying.PieceManager;
+using TotemsOfUndying.StatusEffectManager;
 
 namespace TotemsOfUndying;
 
 [BepInPlugin(ModGUID, ModName, ModVersion)] [SuppressMessage("ReSharper", "StringLiteralTypo")]
 internal class Plugin : BaseUnityPlugin
 {
-    #region values
-
-    internal const string ModName = "TotemsOfUndying",
+    private const string ModName = "TotemsOfUndying",
         ModAuthor = "Frogger",
-        ModVersion = "2.3.0",
-        ModGUID = "com." + ModAuthor + ModName;
+        ModVersion = "2.3.1",
+        ModGUID = $"com.{ModAuthor}.{ModName}";
 
-    #endregion
-
-    internal static Totem EikthyrTotem;
-    internal static Totem TheElderTotem;
-    internal static Totem BonemassTotem;
-    internal static Totem ModerTotem;
-    internal static Totem YagluthTotem;
+    private static Totem EikthyrTotem;
+    private static Totem TheElderTotem;
+    private static Totem BonemassTotem;
+    private static Totem ModerTotem;
+    private static Totem YagluthTotem;
 
     private void Awake()
     {
-        CreateMod(this, ModName, ModAuthor, ModVersion);
+        CreateMod(this, ModName, ModAuthor, ModVersion, ModGUID);
         OnConfigurationChanged += UpdateConfiguration;
         bundle = PrefabManager.RegisterAssetBundle("totems");
 

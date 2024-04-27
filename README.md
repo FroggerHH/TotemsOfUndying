@@ -10,9 +10,16 @@ additional biomes, bad biome and effects. When activated in your favorite biome,
 give you a certain amount of health, stamina, a unique time bonus and possibly some additional
 effects.
 
-When activated in one of the additional biomes
-, you will not get a unique bonus, with a certain chance you will get additional effects and also get
+When activated in one of the additional biomes ,
+you will not get a unique bonus, with a certain chance you will get additional effects and also get
 a little less health and stamina than in the best biome. In a bad biome, the totem won't work.
+
+Localized to 31 language, thanks to Google Translate.
+
+### <ins>If something does not work for you, you have found any bugs, there are any suggestions, then be sure to write to me!</ins>
+
+My discord ```justafrogger```
+<img alt="Cat" height="30" src="https://media.tenor.com/bWUeVRqW9-IAAAAi/fast-cat-cat-excited.gif" align="center"/>
 
 Special thanks for the models to ```MichaelB```, discord -
 @anime9896, [artstation](https://www.artstation.com/forexample)
