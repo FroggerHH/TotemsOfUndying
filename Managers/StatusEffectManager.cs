@@ -6,6 +6,8 @@ using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 
+// ReSharper disable All
+
 namespace TotemsOfUndying.StatusEffectManager;
 
 [PublicAPI]

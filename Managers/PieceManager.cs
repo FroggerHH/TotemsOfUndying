@@ -271,7 +271,7 @@ public class BuildPiece
         {
             if (configManagerType?.GetProperty("DisplayingWindow")!.GetValue(configManager) is true)
             {
-                configManagerType.GetMethod("BuildSettingList")!.Invoke(configManager, Array.Empty<object>());
+                configManagerType.GetMethod("BuildSettingList")!.Invoke(configManager, []);
             }
         }
 
@@ -837,7 +837,7 @@ public class BuildPiece
         int RightColumnWidth =
             (int)(configManager?.GetType()
                 .GetProperty("RightColumnWidth", BindingFlags.Instance | BindingFlags.NonPublic)!.GetGetMethod(true)
-                .Invoke(configManager, Array.Empty<object>()) ?? 130);
+                .Invoke(configManager, []) ?? 130);
 
         GUILayout.BeginVertical();
         foreach (Requirement req in new SerializedRequirements((string)cfg.BoxedValue).Reqs)

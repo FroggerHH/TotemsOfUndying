@@ -48,7 +48,7 @@ public class InternalName : Attribute
 [PublicAPI]
 public class RequiredResourceList
 {
-    public readonly List<Requirement> Requirements = new();
+    public readonly List<Requirement> Requirements = [];
 
     public bool
         Free; // If Requirements empty and Free is true, then it costs nothing. If Requirements empty and Free is false, then it won't be craftable.
@@ -63,7 +63,7 @@ public class RequiredResourceList
 [PublicAPI]
 public class CraftingStationList
 {
-    public readonly List<CraftingStationConfig> Stations = new();
+    public readonly List<CraftingStationConfig> Stations = [];
 
     public void Add(CraftingTable table, int level) =>
         Stations.Add(new CraftingStationConfig { Table = table, level = level });
@@ -133,7 +133,7 @@ public enum Configurability
 [PublicAPI]
 public class DropTargets
 {
-    public readonly List<DropTarget> Drops = new();
+    public readonly List<DropTarget> Drops = [];
 
     public void Add(string creatureName, float chance, int min = 1, int? max = null, bool levelMultiplier = true)
     {
@@ -187,7 +187,7 @@ public class Item
         public int quality;
     }
 
-    private static readonly List<Item> registeredItems = new();
+    private static readonly List<Item> registeredItems = [];
     private static readonly Dictionary<ItemDrop, Item> itemDropMap = new();
     private static Dictionary<Item, Dictionary<string, List<Recipe>>> activeRecipes = new();
     private static Dictionary<Recipe, ConfigEntryBase?> hiddenCraftRecipes = new();
@@ -258,8 +258,8 @@ public class Item
         "Configures whether the item can be bought at the trader.\nDon't forget to set cost to something above 0 or the item will be sold for free.")]
     public readonly Trade Trade = new();
 
-    internal List<Conversion> Conversions = new();
-    internal List<Smelter.ItemConversion> conversions = new();
+    internal List<Conversion> Conversions = [];
+    internal List<Smelter.ItemConversion> conversions = [];
     public Dictionary<string, ItemRecipe> Recipes = new();
 
     public ItemRecipe this[string name]
@@ -438,7 +438,7 @@ public class Item
     {
         if (configManager?.GetType().GetProperty("DisplayingWindow")!.GetValue(configManager) is true)
         {
-            configManager.GetType().GetMethod("BuildSettingList")!.Invoke(configManager, Array.Empty<object>());
+            configManager.GetType().GetMethod("BuildSettingList")!.Invoke(configManager, []);
         }
     }
 
@@ -507,7 +507,7 @@ public class Item
                         {
                             ItemConfig cfg = itemCraftConfigs[item][configKey] = new ItemConfig();
 
-                            List<ConfigurationManagerAttributes> hideWhenNoneAttributes = new();
+                            List<ConfigurationManagerAttributes> hideWhenNoneAttributes = [];
 
                             cfg.table = config(englishName, "Crafting Station" + configSuffix,
                                 item.Recipes[configKey].Crafting.Stations.First().Table,
@@ -1027,7 +1027,7 @@ public class Item
 
                 if ((item.configurability & Configurability.Trader) != 0)
                 {
-                    List<ConfigurationManagerAttributes> traderAttributes = new();
+                    List<ConfigurationManagerAttributes> traderAttributes = [];
                     bool TraderBrowsability() => item.traderConfig.trader.Value != 0;
 
                     item.traderConfig = new TraderConfig
@@ -1230,7 +1230,7 @@ public class Item
         itemCraftConfigs.TryGetValue(this, out Dictionary<string, ItemConfig> cfgs);
         foreach (KeyValuePair<string, ItemRecipe> kv in Recipes)
         {
-            List<Recipe> recipes = new();
+            List<Recipe> recipes = [];
 
             foreach (CraftingStationConfig station in kv.Value.Crafting.Stations)
             {
@@ -1296,7 +1296,7 @@ public class Item
             objectDB.m_recipes.AddRange(recipes);
         }
 
-        conversions = new List<Smelter.ItemConversion>();
+        conversions = [];
         for (int i = 0; i < Conversions.Count; ++i)
         {
             Conversion conversion = Conversions[i];
@@ -1376,7 +1376,7 @@ public class Item
             IEnumerable<ItemConfig> configs;
             if (!itemCraftConfigs.TryGetValue(item, out Dictionary<string, ItemConfig> itemConfigs))
             {
-                configs = Enumerable.Empty<ItemConfig>();
+                configs = [];
             } else if (Player.m_localPlayer.GetCurrentCraftingStation() is { } currentCraftingStation)
             {
                 string stationName = Utils.GetPrefabName(currentCraftingStation.gameObject);
@@ -1528,7 +1528,7 @@ public class Item
 
         instructions.InsertRange(loopStartInstruction - 2, new[]
         {
-            new CodeInstruction(OpCodes.Dup) { labels = new List<Label> { loopStartLabel } },
+            new CodeInstruction(OpCodes.Dup) { labels = [loopStartLabel] },
             new CodeInstruction(OpCodes.Stloc, skippedNum),
         });
 
@@ -1667,7 +1667,7 @@ public class Item
 
             RenderTexture.active = currentRenderTexture;
 
-            item.m_itemData.m_shared.m_icons = new[] { Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f)) };
+            item.m_itemData.m_shared.m_icons = [Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f))];
 
             DestroyImmediate(visual);
             camera.targetTexture.Release();
@@ -1721,13 +1721,13 @@ public class Item
                         ? (bool?)a.GetType().GetField("ReadOnly")?.GetValue(a)
                         : null).FirstOrDefault(v => v != null) ?? false;
 
-            List<Requirement> newReqs = new();
+            List<Requirement> newReqs = [];
             bool wasUpdated = false;
 
             int RightColumnWidth =
                 (int)(configManager?.GetType()
                     .GetProperty("RightColumnWidth", BindingFlags.Instance | BindingFlags.NonPublic)!.GetGetMethod(true)
-                    .Invoke(configManager, Array.Empty<object>()) ?? 130);
+                    .Invoke(configManager, []) ?? 130);
 
             GUILayout.BeginVertical();
 
@@ -1849,13 +1849,13 @@ public class Item
                     ? (bool?)a.GetType().GetField("ReadOnly")?.GetValue(a)
                     : null).FirstOrDefault(v => v != null) ?? false;
 
-        List<DropTarget> newDrops = new();
+        List<DropTarget> newDrops = [];
         bool wasUpdated = false;
 
         int RightColumnWidth =
             (int)(configManager?.GetType()
                 .GetProperty("RightColumnWidth", BindingFlags.Instance | BindingFlags.NonPublic)!.GetGetMethod(true)
-                .Invoke(configManager, Array.Empty<object>()) ?? 130);
+                .Invoke(configManager, []) ?? 130);
 
         GUILayout.BeginVertical();
         foreach (DropTarget drop in new SerializedDrop((string)cfg.BoxedValue).Drops.DefaultIfEmpty(new DropTarget
@@ -2033,7 +2033,7 @@ public class Item
 
         public SerializedDrop(string drops)
         {
-            Drops = (drops == "" ? Array.Empty<string>() : drops.Split(',')).Select(r =>
+            Drops = (drops == "" ? [] : drops.Split(',')).Select(r =>
             {
                 string[] parts = r.Split(':');
                 if (parts.Length <= 2 || !int.TryParse(parts[2], out int min))
@@ -2153,7 +2153,7 @@ public class Item
         ConfigEntry<T> configEntry = plugin.Config.Bind(group, name, value, description);
 
         configSync?.GetType().GetMethod("AddConfigEntry")!.MakeGenericMethod(typeof(T))
-            .Invoke(configSync, new object[] { configEntry });
+            .Invoke(configSync, [configEntry]);
 
         return configEntry;
     }
@@ -2165,7 +2165,7 @@ public class Item
 [PublicAPI]
 public class LocalizeKey
 {
-    private static readonly List<LocalizeKey> keys = new();
+    private static readonly List<LocalizeKey> keys = [];
 
     public readonly string Key;
     public readonly Dictionary<string, string> Localizations = new();
@@ -2364,8 +2364,8 @@ public static class PrefabManager
         return assets;
     }
 
-    private static readonly List<GameObject> prefabs = new();
-    private static readonly List<GameObject> ZnetOnlyPrefabs = new();
+    private static readonly List<GameObject> prefabs = [];
+    private static readonly List<GameObject> ZnetOnlyPrefabs = [];
 
     public static GameObject
         RegisterPrefab(string assetBundleFileName, string prefabName, string folderName = "assets") =>

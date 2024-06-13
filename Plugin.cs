@@ -7,13 +7,14 @@ using TotemsOfUndying.StatusEffectManager;
 
 namespace TotemsOfUndying;
 
-[BepInPlugin(ModGUID, ModName, ModVersion)] [SuppressMessage("ReSharper", "StringLiteralTypo")]
+[BepInPlugin(ModGuid, ModName, ModVersion)]
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
 internal class Plugin : BaseUnityPlugin
 {
     private const string ModName = "TotemsOfUndying",
         ModAuthor = "Frogger",
-        ModVersion = "2.3.3",
-        ModGUID = $"com.{ModAuthor}.{ModName}";
+        ModVersion = "2.3.4",
+        ModGuid = $"com.{ModAuthor}.{ModName}";
 
     private static Totem EikthyrTotem;
     private static Totem TheElderTotem;
@@ -23,7 +24,7 @@ internal class Plugin : BaseUnityPlugin
 
     private void Awake()
     {
-        CreateMod(this, ModName, ModAuthor, ModVersion, ModGUID);
+        CreateMod(this, ModName, ModAuthor, ModVersion, ModGuid);
         OnConfigurationChanged += UpdateConfiguration;
         bundle = PrefabManager.RegisterAssetBundle("totems");
 
@@ -467,111 +468,118 @@ internal class Plugin : BaseUnityPlugin
         CustomSE SE_Yagluth = new("totemsofundying_efects", "SE_Yagluth");
         var SE_Yagluth_effect = SE_Yagluth.Effect as SE_Stats;
         SE_Yagluth_effect.m_icon = YagluthTotem.config.itemDrop.m_itemData.GetIcon();
-        SE_Yagluth_effect.m_mods = new List<HitData.DamageModPair>
-        {
+        SE_Yagluth_effect.m_mods =
+        [
             new()
             {
                 m_type = HitData.DamageType.Physical,
                 m_modifier = HitData.DamageModifier.Resistant
             },
+
             new()
             {
                 m_type = HitData.DamageType.Pickaxe,
                 m_modifier = HitData.DamageModifier.Resistant
             },
+
             new()
             {
                 m_type = HitData.DamageType.Pierce,
                 m_modifier = HitData.DamageModifier.Resistant
             },
+
             new()
             {
                 m_type = HitData.DamageType.Poison,
                 m_modifier = HitData.DamageModifier.Resistant
             },
+
             new()
             {
                 m_type = HitData.DamageType.Slash,
                 m_modifier = HitData.DamageModifier.Resistant
             },
+
             new()
             {
                 m_type = HitData.DamageType.Spirit,
                 m_modifier = HitData.DamageModifier.Resistant
             },
+
             new()
             {
                 m_type = HitData.DamageType.Elemental,
                 m_modifier = HitData.DamageModifier.Resistant
             }
-        };
+        ];
 
         CustomSE SE_Moder = new("totemsofundying_efects", "SE_Moder");
         SE_Moder.IconSprite = ModerTotem.config.itemDrop.m_itemData.GetIcon();
         var SE_Moder_effect = SE_Moder.Effect as SE_Stats;
         SE_Moder_effect.m_icon = ModerTotem.config.itemDrop.m_itemData.GetIcon();
-        SE_Moder_effect.m_mods = new List<HitData.DamageModPair>
-        {
+        SE_Moder_effect.m_mods =
+        [
             new()
             {
                 m_type = HitData.DamageType.Fire,
                 m_modifier = HitData.DamageModifier.Weak
             }
-        };
+        ];
 
         CustomSE SE_Bonemass = new("totemsofundying_efects", "SE_Bonemass");
         SE_Bonemass.IconSprite = BonemassTotem.config.itemDrop.m_itemData.GetIcon();
         var SE_Bonemass_effect = SE_Bonemass.Effect as SE_Stats;
         SE_Bonemass_effect.m_icon = BonemassTotem.config.itemDrop.m_itemData.GetIcon();
-        SE_Bonemass_effect.m_mods = new List<HitData.DamageModPair>
-        {
+        SE_Bonemass_effect.m_mods =
+        [
             new()
             {
                 m_type = HitData.DamageType.Blunt,
                 m_modifier = HitData.DamageModifier.VeryResistant
             }
-        };
+        ];
 
         CustomSE SE_Eikthyr = new("totemsofundying_efects", "SE_Eikthyr");
         SE_Eikthyr.IconSprite = EikthyrTotem.config.itemDrop.m_itemData.GetIcon();
         var SE_Eikthyr_effect = SE_Eikthyr.Effect as SE_Stats;
         SE_Eikthyr_effect.m_icon = EikthyrTotem.config.itemDrop.m_itemData.GetIcon();
-        SE_Eikthyr_effect.m_mods = new List<HitData.DamageModPair>
-        {
+        SE_Eikthyr_effect.m_mods =
+        [
             new()
             {
                 m_type = HitData.DamageType.Lightning,
                 m_modifier = HitData.DamageModifier.VeryResistant
             }
-        };
+        ];
 
         CustomSE SETheElder = new("totemsofundying_efects", "SE_TheElder");
         SETheElder.IconSprite = TheElderTotem.config.itemDrop.m_itemData.GetIcon();
         var SETheElder_effect = SETheElder.Effect as SE_Stats;
         SETheElder_effect.m_icon = TheElderTotem.config.itemDrop.m_itemData.GetIcon();
         SETheElder_effect.m_modifyAttackSkill = SkillType.Axes;
-        SETheElder_effect.m_mods = new List<HitData.DamageModPair>
-        {
+        SETheElder_effect.m_mods =
+        [
             new()
             {
                 m_type = HitData.DamageType.Chop,
                 m_modifier = HitData.DamageModifier.Weak
             },
+
             new()
             {
                 m_type = HitData.DamageType.Pierce,
                 m_modifier = HitData.DamageModifier.Resistant
             }
-        };
+        ];
 
         #endregion
 
         Localizer.Load();
     }
 
-    private void LoadTotems()
+    private static void LoadTotems()
     {
-        EikthyrTotem = Totem.CreateInstance("TotemOfEikthyr" /*, "fx_Eikthyr"*/);
+        EikthyrTotem = Totem.CreateInstance("TotemOfEikthyr");
         EikthyrTotem.config.allBiomes = true;
         EikthyrTotem.config.healthRightBiome = 10;
         EikthyrTotem.config.healthWrongBiome = 10;
@@ -581,19 +589,20 @@ internal class Plugin : BaseUnityPlugin
         EikthyrTotem.config.damageModifier = 0f;
         EikthyrTotem.config.Bind();
 
-        TheElderTotem = Totem.CreateInstance("TotemOfTheElder" /*, "fx_TheElder"*/);
+        TheElderTotem = Totem.CreateInstance("TotemOfTheElder");
         TheElderTotem.config.bestBiome = BlackForest;
         TheElderTotem.config.badBiome = AshLands;
-        TheElderTotem.config.aditionalBiomes.Add(Mistlands);
+        TheElderTotem.config.additionalBiomes.Add(Mistlands);
         TheElderTotem.config.healthRightBiome = 50;
         TheElderTotem.config.healthWrongBiome = 20;
         TheElderTotem.config.staminaRightBiome = 45;
         TheElderTotem.config.staminaWrongBiome = 20;
+        TheElderTotem.config.eitrWrongBiome = 50;
         TheElderTotem.config.speedModifier = 0.1f;
         TheElderTotem.config.damageModifier = 0.13f;
         TheElderTotem.config.Bind();
 
-        BonemassTotem = Totem.CreateInstance("TotemOfBonemass" /*, "fx_Bonemass"*/);
+        BonemassTotem = Totem.CreateInstance("TotemOfBonemass");
         BonemassTotem.config.bestBiome = Swamp;
         BonemassTotem.config.badBiome = AshLands;
         BonemassTotem.config.healthRightBiome = 40;
@@ -604,24 +613,26 @@ internal class Plugin : BaseUnityPlugin
         BonemassTotem.config.buffs.Add("Potion_poisonresist");
         BonemassTotem.config.Bind();
 
-        ModerTotem = Totem.CreateInstance("TotemOfModer" /*, "fx_Moder"*/);
+        ModerTotem = Totem.CreateInstance("TotemOfModer");
         ModerTotem.config.bestBiome = Mountain;
-        ModerTotem.config.aditionalBiomes.Add(DeepNorth);
+        ModerTotem.config.additionalBiomes.Add(DeepNorth);
         ModerTotem.config.healthRightBiome = 101;
         ModerTotem.config.healthWrongBiome = 30;
         ModerTotem.config.staminaRightBiome = 60;
         ModerTotem.config.staminaWrongBiome = 50;
+        TheElderTotem.config.eitrRightBiome = 70;
+        TheElderTotem.config.eitrWrongBiome = 30;
         ModerTotem.config.speedModifier = 0.11f;
         ModerTotem.config.fallDamageModifier = -5f;
         ModerTotem.config.buffs.Add("Potion_frostresist");
         ModerTotem.config.Bind();
 
-        YagluthTotem = Totem.CreateInstance("TotemOfYagluth" /*, "fx_Yagluth"*/);
+        YagluthTotem = Totem.CreateInstance("TotemOfYagluth");
         YagluthTotem.config.bestBiome = Plains;
         YagluthTotem.config.badBiome = Ocean;
-        YagluthTotem.config.aditionalBiomes.Add(Swamp);
-        YagluthTotem.config.aditionalBiomes.Add(Mistlands);
-        YagluthTotem.config.aditionalBiomes.Add(AshLands);
+        YagluthTotem.config.additionalBiomes.Add(Swamp);
+        YagluthTotem.config.additionalBiomes.Add(Mistlands);
+        YagluthTotem.config.additionalBiomes.Add(AshLands);
         YagluthTotem.config.healthRightBiome = 150;
         YagluthTotem.config.healthWrongBiome = 80;
         YagluthTotem.config.staminaRightBiome = 60;
@@ -634,7 +645,7 @@ internal class Plugin : BaseUnityPlugin
         Debug("All Totems Loaded");
     }
 
-    public void UseTotem(ItemData itemData, string totemName)
+    public static void UseTotem(ItemData itemData, string totemName)
     {
         var currentBiome = Player.m_localPlayer.GetCurrentBiome();
         GetTotem(totemName)?.Use(itemData, currentBiome);
@@ -653,7 +664,7 @@ internal class Plugin : BaseUnityPlugin
         };
     }
 
-    internal void UpdateConfiguration()
+    private static void UpdateConfiguration()
     {
         EikthyrTotem?.config?.UpdateValues();
         TheElderTotem?.config?.UpdateValues();

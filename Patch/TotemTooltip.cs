@@ -33,6 +33,8 @@ public class TotemTooltip
             $"<color=#ff8080ff>{totem.config.healthRightBiome}</color> {"$healthAfterBiome".Localize()} {bestBiome}");
         sb.AppendLine(
             $"<color=yellow>{totem.config.staminaRightBiome}</color> {"$staminaAfterBiome".Localize()} {bestBiome}");
+        sb.AppendLine(
+            $"<color=yellow>{totem.config.eitrRightBiome}</color> {"$eitrAfterBiome".Localize()} {bestBiome}");
         if (totem.config.allBiomes == false)
         {
             var lessEffect = Math.Round(1 / totem.config.additionalBiomeStatsModifier, 2);
@@ -41,7 +43,7 @@ public class TotemTooltip
                 var lessEffectStr = $"{"$lessEffectInBiomes".Localize()} "
                                     + $"<color=yellow>{lessEffect}</color> {"$timesInBiomes".Localize()} "
                                     + $"<color=orange>"
-                                    + $"{totem.config.aditionalBiomes.Where(x => x.GetLocalizationKey() != "$biome_none").Select(x => x.GetLocalizationKey()
+                                    + $"{totem.config.additionalBiomes.Where(x => x.GetLocalizationKey() != "$biome_none").Select(x => x.GetLocalizationKey()
                                             .Localize())
                                         .GetString("</color>, <color=orange>")}"
                                     + $"</color>";
@@ -52,7 +54,7 @@ public class TotemTooltip
                     x != "None" && x != totem.config.bestBiome.ToString() &&
                     !totem
                         .config
-                        .aditionalBiomes.Select(x => x.ToString()).Contains(x))
+                        .additionalBiomes.Select(x => x.ToString()).Contains(x))
                 .Select(x => ((Biome)Parse(typeof(Biome), x)).GetLocalizationKey().Localize())
                 .ToList();
             if (wrongBiomes.Count > 0)
@@ -65,6 +67,11 @@ public class TotemTooltip
                     + $"</color>");
                 sb.AppendLine(
                     $"<color=yellow>{totem.config.staminaWrongBiome}</color> {"$staminaAfterBiome".Localize()} "
+                    + $"<color=orange>"
+                    + $"{wrongBiomesStr}"
+                    + $"</color>");
+                sb.AppendLine(
+                    $"<color=yellow>{totem.config.eitrWrongBiome}</color> {"$eitrAfterBiome".Localize()} "
                     + $"<color=orange>"
                     + $"{wrongBiomesStr}"
                     + $"</color>");

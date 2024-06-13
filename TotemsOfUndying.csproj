@@ -126,6 +126,10 @@
         <EmbeddedResource Include="translations\Russian.yml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
+        <None Remove="assets\totemsofundying_efects"/>
+        <EmbeddedResource Include="assets\totemsofundying_efects">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
     <Target Name="CopyDLL" AfterTargets="ILRepack">
